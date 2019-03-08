@@ -1,0 +1,54 @@
+package com.cg.friday;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+
+public class ApiCall {
+
+	public static void main(String[] args) {
+		
+		String uri = "https://samples.openweathermap.org/data/2.5/weather";
+		String token = "b6907d289e10d714a6e88b30761fae22";
+		String location = "London,uk";
+		
+		try{
+			URL url = new URL(uri +"?q="+location+"&appid="+token);
+			System.out.println("URL"+url);
+			URLConnection conn = url.openConnection();
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			StringBuilder res = new StringBuilder();
+			String line;
+			while((line = br.readLine())!=null){
+				res.append(line);
+			}br.close();
+			
+			Map<String,Object> resMap = jsonToMap(res.toString());
+			System.out.println(resMap);
+			
+			System.out.println(resMap.get("coord").toString());
+		}catch(Exception e ){
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	public static Map<String,Object> jsonToMap(String res){
+		
+		Map<String,Object> map = new Gson().fromJson(res, new TypeToken<HashMap<String,Object>>(){}.getType());
+		
+		/*Map<String, Object> map1 = new Gson().fromJson(res,new TypeToken<HashMap<String,Object>>(){}.getType());
+		
+		Map<String,Object> map1 = new Gson().fromJson(res, new TypeToken<HashMap<String,Object>>(){}.getType());
+		
+		Map<String,Object> map2 = new Gson().fromJson(res, new TypeToken<HashMap<String,Object>>(){}.getType());*/
+		
+	return map;	
+	}
+}
